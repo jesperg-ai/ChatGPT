@@ -57,7 +57,9 @@ def fetch_oura_sleep(start_date: dt.date, end_date: dt.date) -> List[SleepRecord
     }
     resp = requests.get(OURA_SLEEP_ENDPOINT, headers=headers, params=params, timeout=30)
     resp.raise_for_status()
-    data = resp.json().get("data", [])
+    data = resp.json()
+    print("Sömn-JSON:", data)
+    data = data.get("data", [])
     records = []
     for d in data:
         records.append(
