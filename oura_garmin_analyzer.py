@@ -48,6 +48,7 @@ def fetch_oura_sleep(start_date: dt.date, end_date: dt.date) -> List[SleepRecord
     token = CREDENTIALS["oura_token"]
     if not token:
         raise EnvironmentError("OURA_TOKEN is not set")
+
     headers = {
         "Authorization": f"Bearer {token}"
     }
@@ -55,27 +56,35 @@ def fetch_oura_sleep(start_date: dt.date, end_date: dt.date) -> List[SleepRecord
         "start_date": start_date.isoformat(),
         "end_date": end_date.isoformat(),
     }
+
     resp = requests.get(OURA_SLEEP_ENDPOINT, headers=headers, params=params, timeout=30)
     resp.raise_for_status()
     data = resp.json()
-    print("Sömn-JSON:", data)
+    print("Sömn-JSON:", data)  # Debug: se API-svaret
     data = data.get("data", [])
     records = []
+
     for d in data:
-        # The API typically exposes the date under the key "day". Fall back to
-        # "summary_date" if necessary to avoid KeyError.
+        # Använd "day" om den finns, annars "summary_date"
         date_str = d.get("day") or d.get("summary_date")
         if not date_str:
-            # Skip entries that lack a date field entirely.
+            continue  # hoppa över om ingen datum finns
+
+        try:
+            date_obj = dt.date.fromisoformat(date_str)
+        except ValueError:
+            print(f"Ogiltigt datumformat: {date_str}")
             continue
+
         records.append(
             SleepRecord(
-                date=dt.date.fromisoformat(date_str),
+                date=date_obj,
                 total_sleep_duration=d.get("total_sleep_duration", 0),
                 deep_sleep_duration=d.get("deep_sleep_duration"),
                 rest_hr=d.get("resting_heart_rate"),
             )
         )
+
     return records
 
 
