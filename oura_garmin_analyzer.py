@@ -20,7 +20,7 @@ import requests  # Requires installation of the 'requests' package
 
 # Credentials for API access
 CREDENTIALS = {
-    "oura_token": "INSERT_YOUR_OURA_TOKEN_HERE",
+    "oura_token": "WZCAKZKSCSJD57V6D2DTCMEZ7HUCT6WJ",
     "garmin_client_id": "INSERT_GARMIN_CLIENT_ID",
     "garmin_client_secret": "INSERT_GARMIN_CLIENT_SECRET",
 }
