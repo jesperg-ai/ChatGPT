@@ -24,7 +24,9 @@ try:
     import matplotlib.pyplot as plt
 except ModuleNotFoundError as exc:  # pragma: no cover - simple guard
     raise SystemExit("The 'matplotlib' package is required. Install it via 'pip install matplotlib'.") from exc
+
 import webbrowser
+
 
 # Folder where daily plots will be stored
 EXPORT_DIR = r"C:\Users\JesperGunnarson\Dropbox\J Privat\Health\Kallbad"
@@ -55,7 +57,6 @@ def fetch_oura_sleep(start_date: dt.date, end_date: dt.date) -> List[SleepRecord
     token = CREDENTIALS["oura_token"]
     if not token:
         raise EnvironmentError("OURA_TOKEN is not set")
-
     headers = {
         "Authorization": f"Bearer {token}"
     }
@@ -70,8 +71,7 @@ def fetch_oura_sleep(start_date: dt.date, end_date: dt.date) -> List[SleepRecord
     print("Sömn-JSON:", data)
     data = data.get("data", [])
     records = []
-
-    for d in data:
+ for d in data:
         date_str = d.get("day") or d.get("summary_date")
         if not date_str:
             continue
