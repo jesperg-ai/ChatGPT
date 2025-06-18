@@ -10,8 +10,8 @@ placeholder and will need to be completed with valid API calls and credentials.
    python3 -m pip install requests
    ```
     (Internet access is required to install the package.)
-2. Edit `oura_garmin_analyzer.py` and insert your personal Oura token and Garmin
-    credentials in the `CREDENTIALS` dictionary.
+2. Set environment variables `OURA_TOKEN`, `GARMIN_CLIENT_ID` och
+   `GARMIN_CLIENT_SECRET` med dina egna värden.
 3. Create a CSV file named `cold_baths.csv` with a header `date` and dates in
    `YYYY-MM-DD` format when you took cold baths.
 
@@ -19,7 +19,7 @@ placeholder and will need to be completed with valid API calls and credentials.
 1. Logga in på [Oura Cloud](https://cloud.ouraring.com/).
 2. Klicka på ditt profilfoto uppe till höger och välj “Personal access tokens”.
 3. Skapa ett nytt token och kopiera värdet.
-4. Klistra in token i `oura_garmin_analyzer.py` under `CREDENTIALS["oura_token"]`.
+4. Sätt miljövariabeln `OURA_TOKEN` med värdet från ditt token.
 
 ## Running the script
 ```

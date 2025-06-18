@@ -2,17 +2,18 @@
 """Utility for analyzing cold baths impact on sleep using Oura and Garmin data.
 
 This module provides functions for:
-- Fetching sleep data from Oura using the Oura API and a personal access token.
+- Fetching sleep data from Oura via the Oura API.
 - Fetching activity data from Garmin (placeholder implementation).
 - Loading cold bath times from a CSV file.
 - Calculating correlations between sleep metrics and cold baths.
 
-The implementation assumes credentials are stored in the `CREDENTIALS` dictionary
-below. Replace the placeholders with your actual tokens.
+Credentials are read from environment variables (`OURA_TOKEN`, `GARMIN_CLIENT_ID`,
+`GARMIN_CLIENT_SECRET`) and stored in the `CREDENTIALS` dictionary.
 """
 
 import csv
 import datetime as dt
+import os
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -20,9 +21,10 @@ import requests  # Requires installation of the 'requests' package
 
 # Credentials for API access
 CREDENTIALS = {
-    "oura_token": "WZCAKZKSCSJD57V6D2DTCMEZ7HUCT6WJ",
-    "garmin_client_id": "INSERT_GARMIN_CLIENT_ID",
-    "garmin_client_secret": "INSERT_GARMIN_CLIENT_SECRET",
+    # Set these environment variables before running the script
+    "oura_token": os.getenv("OURA_TOKEN"),
+    "garmin_client_id": os.getenv("GARMIN_CLIENT_ID"),
+    "garmin_client_secret": os.getenv("GARMIN_CLIENT_SECRET"),
 }
 
 OURA_SLEEP_ENDPOINT = "https://api.ouraring.com/v2/usercollection/daily_sleep"
@@ -41,8 +43,11 @@ class ColdBathRecord:
 
 def fetch_oura_sleep(start_date: dt.date, end_date: dt.date) -> List[SleepRecord]:
     """Fetch sleep data from Oura between start_date and end_date."""
+    token = CREDENTIALS["oura_token"]
+    if not token:
+        raise EnvironmentError("OURA_TOKEN is not set")
     headers = {
-        "Authorization": f"Bearer {CREDENTIALS['oura_token']}"
+        "Authorization": f"Bearer {token}"
     }
     params = {
         "start_date": start_date.isoformat(),
