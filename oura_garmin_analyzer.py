@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 import requests  # Requires installation of the 'requests' package
+import matplotlib.pyplot as plt
 
 # Credentials for API access
 CREDENTIALS = {
@@ -114,6 +115,24 @@ def correlate_baths_sleep(
     return cov / (var_sleep ** 0.5 * var_bath ** 0.5)
 
 
+def plot_sleep_vs_baths(
+    sleep: List[SleepRecord], baths: List[ColdBathRecord], out_path: str = "sleep_vs_coldbath.png"
+) -> None:
+    """Create a bar plot showing sleep duration and mark days with cold baths."""
+    bath_dates = {b.date for b in baths}
+    sleep_sorted = sorted(sleep, key=lambda s: s.date)
+    dates = [s.date.strftime("%Y-%m-%d") for s in sleep_sorted]
+    hours = [s.total_sleep_duration / 3600 for s in sleep_sorted]
+    colors = ["tab:blue" if s.date in bath_dates else "tab:gray" for s in sleep_sorted]
+    plt.figure(figsize=(10, 4))
+    plt.bar(dates, hours, color=colors)
+    plt.ylabel("Sömn (timmar)")
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+    plt.savefig(out_path)
+    plt.close()
+
+
 def main():
     start = dt.date.today() - dt.timedelta(days=30)
     end = dt.date.today()
@@ -121,6 +140,7 @@ def main():
     baths = fetch_oura_cold_baths(start, end)
     corr = correlate_baths_sleep(sleep_data, baths)
     print(f"Correlation between cold baths and sleep duration: {corr:.2f}")
+    plot_sleep_vs_baths(sleep_data, baths)
 
 
 if __name__ == "__main__":
