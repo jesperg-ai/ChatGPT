@@ -15,8 +15,15 @@ import os
 from dataclasses import dataclass
 from typing import List, Optional
 
-import requests  # Requires installation of the 'requests' package
-import matplotlib.pyplot as plt
+try:
+    import requests  # Requires installation of the 'requests' package
+except ModuleNotFoundError as exc:  # pragma: no cover - simple guard
+    raise SystemExit("The 'requests' package is required. Install it via 'pip install requests'.") from exc
+
+try:
+    import matplotlib.pyplot as plt
+except ModuleNotFoundError as exc:  # pragma: no cover - simple guard
+    raise SystemExit("The 'matplotlib' package is required. Install it via 'pip install matplotlib'.") from exc
 import webbrowser
 
 # Folder where daily plots will be stored
