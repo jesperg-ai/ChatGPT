@@ -15,9 +15,18 @@ import os
 from dataclasses import dataclass
 from typing import List, Optional
 
-import requests  # Requires installation of the 'requests' package
-import matplotlib.pyplot as plt
+try:
+    import requests  # Requires installation of the 'requests' package
+except ModuleNotFoundError as exc:  # pragma: no cover - simple guard
+    raise SystemExit("The 'requests' package is required. Install it via 'pip install requests'.") from exc
+
+try:
+    import matplotlib.pyplot as plt
+except ModuleNotFoundError as exc:  # pragma: no cover - simple guard
+    raise SystemExit("The 'matplotlib' package is required. Install it via 'pip install matplotlib'.") from exc
+
 import webbrowser
+
 
 # Folder where daily plots will be stored
 EXPORT_DIR = r"C:\Users\JesperGunnarson\Dropbox\J Privat\Health\Kallbad"
@@ -55,21 +64,26 @@ def fetch_oura_sleep(start_date: dt.date, end_date: dt.date) -> List[SleepRecord
         "start_date": start_date.isoformat(),
         "end_date": end_date.isoformat(),
     }
+
     resp = requests.get(OURA_SLEEP_ENDPOINT, headers=headers, params=params, timeout=30)
     resp.raise_for_status()
     data = resp.json()
     print("Sömn-JSON:", data)
     data = data.get("data", [])
     records = []
-    for d in data:
+ for d in data:
+        date_str = d.get("day") or d.get("summary_date")
+        if not date_str:
+            continue
         records.append(
             SleepRecord(
-                date=dt.date.fromisoformat(d["summary_date"]),
+                date=dt.date.fromisoformat(date_str),
                 total_sleep_duration=d.get("total_sleep_duration", 0),
                 deep_sleep_duration=d.get("deep_sleep_duration"),
                 rest_hr=d.get("resting_heart_rate"),
             )
         )
+
     return records
 
 
