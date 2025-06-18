@@ -30,10 +30,11 @@ identifierar kallbad genom att leta efter korta morgonpass i Oura
 mellan kallbad och total sovtid. Dessutom skapas filen
 `sleep_vs_coldbath.png` som visar sömnlängd per dag där dagar med
 kallbad markeras i en annan färg.
-Efter att bilden skapats öppnas den automatiskt i din webbläsare så att
-du enkelt kan se resultatet. Dessutom sparas varje dag en ny bild i
-`C:\Users\JesperGunnarson\Dropbox\J Privat\Health\Kallbad` med
-filnamnet `sleep_vs_coldbath_YYYY-MM-DD.png` (där datumet motsvarar
+Efter körning skapas även `report.html` som innehåller bilden och
+öppnas automatiskt i din webbläsare. Du kan öppna den filen senare för
+att se grafen igen. Dessutom sparas varje dag en ny
+bild i `C:\Users\JesperGunnarson\Dropbox\J Privat\Health\Kallbad`
+med filnamnet `sleep_vs_coldbath_YYYY-MM-DD.png` (där datumet motsvarar
 dagens datum).
 
 ## Disclaimer

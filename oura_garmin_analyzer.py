@@ -140,10 +140,29 @@ def plot_sleep_vs_baths(
     plt.close()
 
 
-def open_plot_in_browser(path: str = "sleep_vs_coldbath.png") -> None:
-    """Open the generated plot in the default web browser."""
+def open_file_in_browser(path: str) -> None:
+    """Open the given file in the default web browser."""
     abs_path = os.path.abspath(path)
     webbrowser.open(f"file://{abs_path}")
+
+
+def generate_html_report(image_path: str, html_path: str) -> None:
+    """Create a simple HTML page displaying the given image."""
+    img_name = os.path.basename(image_path)
+    html_content = f"""
+    <html>
+      <head>
+        <meta charset='utf-8'>
+        <title>Sömn och kallbad</title>
+      </head>
+      <body>
+        <h1>Sömn och kallbad</h1>
+        <img src='{img_name}' alt='Sleep vs Coldbath plot'>
+      </body>
+    </html>
+    """
+    with open(html_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
 
 
 def main():
@@ -156,7 +175,9 @@ def main():
     filename = f"sleep_vs_coldbath_{dt.date.today().isoformat()}.png"
     out_path = os.path.join(EXPORT_DIR, filename)
     plot_sleep_vs_baths(sleep_data, baths, out_path)
-    open_plot_in_browser(out_path)
+    html_path = os.path.join(EXPORT_DIR, "report.html")
+    generate_html_report(out_path, html_path)
+    open_file_in_browser(html_path)
 
 
 if __name__ == "__main__":
