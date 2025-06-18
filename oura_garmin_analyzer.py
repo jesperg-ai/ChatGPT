@@ -17,6 +17,7 @@ from typing import List, Optional
 
 import requests  # Requires installation of the 'requests' package
 import matplotlib.pyplot as plt
+import webbrowser
 
 # Credentials for API access
 CREDENTIALS = {
@@ -133,6 +134,12 @@ def plot_sleep_vs_baths(
     plt.close()
 
 
+def open_plot_in_browser(path: str = "sleep_vs_coldbath.png") -> None:
+    """Open the generated plot in the default web browser."""
+    abs_path = os.path.abspath(path)
+    webbrowser.open(f"file://{abs_path}")
+
+
 def main():
     start = dt.date.today() - dt.timedelta(days=30)
     end = dt.date.today()
@@ -141,6 +148,7 @@ def main():
     corr = correlate_baths_sleep(sleep_data, baths)
     print(f"Correlation between cold baths and sleep duration: {corr:.2f}")
     plot_sleep_vs_baths(sleep_data, baths)
+    open_plot_in_browser()
 
 
 if __name__ == "__main__":

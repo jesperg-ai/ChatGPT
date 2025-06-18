@@ -28,6 +28,8 @@ identifierar kallbad genom att leta efter korta morgonpass i Oura
 mellan kallbad och total sovtid. Dessutom skapas filen
 `sleep_vs_coldbath.png` som visar sömnlängd per dag där dagar med
 kallbad markeras i en annan färg.
+Efter att bilden skapats öppnas den automatiskt i din webbläsare så att
+du enkelt kan se resultatet.
 
 ## Disclaimer
 This script uses the Oura API and expects valid credentials. Network access is
