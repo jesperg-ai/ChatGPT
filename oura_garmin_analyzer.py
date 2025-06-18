@@ -1,13 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Utility for analyzing cold baths impact on sleep using data from Oura.
 
-This module provides functions for:
-- Fetching sleep data from Oura via the Oura API.
-- Fetching workout sessions from Oura and identifying cold baths.
-- Calculating correlations between sleep metrics and kallbad.
-
-Credentials are read from the environment variable `OURA_TOKEN` and stored in
-the `CREDENTIALS` dictionary.
 """
 
 import datetime as dt
@@ -24,9 +16,6 @@ try:
     import matplotlib.pyplot as plt
 except ModuleNotFoundError as exc:  # pragma: no cover - simple guard
     raise SystemExit("The 'matplotlib' package is required. Install it via 'pip install matplotlib'.") from exc
-
-import webbrowser
-
 
 # Folder where daily plots will be stored
 EXPORT_DIR = r"C:\Users\JesperGunnarson\Dropbox\J Privat\Health\Kallbad"
@@ -57,6 +46,7 @@ def fetch_oura_sleep(start_date: dt.date, end_date: dt.date) -> List[SleepRecord
     token = CREDENTIALS["oura_token"]
     if not token:
         raise EnvironmentError("OURA_TOKEN is not set")
+
     headers = {
         "Authorization": f"Bearer {token}"
     }
@@ -71,7 +61,7 @@ def fetch_oura_sleep(start_date: dt.date, end_date: dt.date) -> List[SleepRecord
     print("Sömn-JSON:", data)
     data = data.get("data", [])
     records = []
- for d in data:
+
         date_str = d.get("day") or d.get("summary_date")
         if not date_str:
             continue
@@ -148,6 +138,7 @@ def plot_sleep_vs_baths(
     colors = ["tab:blue" if s.date in bath_dates else "tab:gray" for s in sleep_sorted]
     plt.figure(figsize=(10, 4))
     plt.bar(dates, hours, color=colors)
+
     plt.ylabel("Sömn (timmar)")
     plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
@@ -164,19 +155,7 @@ def open_file_in_browser(path: str) -> None:
 
 def generate_html_report(image_path: str, html_path: str) -> None:
     """Create a simple HTML page displaying the given image."""
-    img_name = os.path.basename(image_path)
-    html_content = f"""
-    <html>
-      <head>
-        <meta charset='utf-8'>
-        <title>Sömn och kallbad</title>
-      </head>
-      <body>
-        <h1>Sömn och kallbad</h1>
-        <img src='{img_name}' alt='Sleep vs Coldbath plot'>
-      </body>
-    </html>
-    """
+
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html_content)
 

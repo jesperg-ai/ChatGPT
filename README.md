@@ -10,6 +10,7 @@ kortare kallbadspass automatiskt dyka upp som träningspass i Oura.
    python3 -m pip install requests matplotlib
    ```
     (Internetanslutning krävs för att hämta paketen.)
+
 2. Sätt miljövariabeln `OURA_TOKEN` med ditt personliga access token.
 3. (Valfritt) Ändra sökvägen `EXPORT_DIR` i `oura_garmin_analyzer.py` om du
    vill spara graferna på en annan plats.
