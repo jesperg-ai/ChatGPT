@@ -19,6 +19,9 @@ import requests  # Requires installation of the 'requests' package
 import matplotlib.pyplot as plt
 import webbrowser
 
+# Folder where daily plots will be stored
+EXPORT_DIR = r"C:\Users\JesperGunnarson\Dropbox\J Privat\Health\Kallbad"
+
 # Credentials for API access
 CREDENTIALS = {
     # Set this environment variable before running the script
@@ -117,7 +120,9 @@ def correlate_baths_sleep(
 
 
 def plot_sleep_vs_baths(
-    sleep: List[SleepRecord], baths: List[ColdBathRecord], out_path: str = "sleep_vs_coldbath.png"
+    sleep: List[SleepRecord],
+    baths: List[ColdBathRecord],
+    out_path: str = "sleep_vs_coldbath.png",
 ) -> None:
     """Create a bar plot showing sleep duration and mark days with cold baths."""
     bath_dates = {b.date for b in baths}
@@ -130,6 +135,7 @@ def plot_sleep_vs_baths(
     plt.ylabel("Sömn (timmar)")
     plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
     plt.savefig(out_path)
     plt.close()
 
@@ -147,8 +153,10 @@ def main():
     baths = fetch_oura_cold_baths(start, end)
     corr = correlate_baths_sleep(sleep_data, baths)
     print(f"Correlation between cold baths and sleep duration: {corr:.2f}")
-    plot_sleep_vs_baths(sleep_data, baths)
-    open_plot_in_browser()
+    filename = f"sleep_vs_coldbath_{dt.date.today().isoformat()}.png"
+    out_path = os.path.join(EXPORT_DIR, filename)
+    plot_sleep_vs_baths(sleep_data, baths, out_path)
+    open_plot_in_browser(out_path)
 
 
 if __name__ == "__main__":

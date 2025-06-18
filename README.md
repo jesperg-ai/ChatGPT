@@ -11,6 +11,8 @@ kortare kallbadspass automatiskt dyka upp som träningspass i Oura.
    ```
     (Internetanslutning krävs för att hämta paketen.)
 2. Sätt miljövariabeln `OURA_TOKEN` med ditt personliga access token.
+3. (Valfritt) Ändra sökvägen `EXPORT_DIR` i `oura_garmin_analyzer.py` om du
+   vill spara graferna på en annan plats.
 
 ## Hämta din Oura-token
 1. Logga in på [Oura Cloud](https://cloud.ouraring.com/).
@@ -29,7 +31,10 @@ mellan kallbad och total sovtid. Dessutom skapas filen
 `sleep_vs_coldbath.png` som visar sömnlängd per dag där dagar med
 kallbad markeras i en annan färg.
 Efter att bilden skapats öppnas den automatiskt i din webbläsare så att
-du enkelt kan se resultatet.
+du enkelt kan se resultatet. Dessutom sparas varje dag en ny bild i
+`C:\Users\JesperGunnarson\Dropbox\J Privat\Health\Kallbad` med
+filnamnet `sleep_vs_coldbath_YYYY-MM-DD.png` (där datumet motsvarar
+dagens datum).
 
 ## Disclaimer
 This script uses the Oura API and expects valid credentials. Network access is
