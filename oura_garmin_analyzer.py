@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
-"""Utility for analyzing cold baths impact on sleep using Oura and Garmin data.
+"""Utility for analyzing cold baths impact on sleep using data from Oura.
 
 This module provides functions for:
 - Fetching sleep data from Oura via the Oura API.
-- Fetching activity data from Garmin (placeholder implementation).
-- Loading cold bath times from a CSV file.
-- Calculating correlations between sleep metrics and cold baths.
+- Fetching workout sessions from Oura and identifying cold baths.
+- Calculating correlations between sleep metrics and kallbad.
 
-Credentials are read from environment variables (`OURA_TOKEN`, `GARMIN_CLIENT_ID`,
-`GARMIN_CLIENT_SECRET`) and stored in the `CREDENTIALS` dictionary.
+Credentials are read from the environment variable `OURA_TOKEN` and stored in
+the `CREDENTIALS` dictionary.
 """
 
-import csv
 import datetime as dt
 import os
 from dataclasses import dataclass
@@ -21,13 +19,12 @@ import requests  # Requires installation of the 'requests' package
 
 # Credentials for API access
 CREDENTIALS = {
-    # Set these environment variables before running the script
+    # Set this environment variable before running the script
     "oura_token": os.getenv("OURA_TOKEN"),
-    "garmin_client_id": os.getenv("GARMIN_CLIENT_ID"),
-    "garmin_client_secret": os.getenv("GARMIN_CLIENT_SECRET"),
 }
 
 OURA_SLEEP_ENDPOINT = "https://api.ouraring.com/v2/usercollection/daily_sleep"
+OURA_WORKOUT_ENDPOINT = "https://api.ouraring.com/v2/usercollection/workout"
 
 @dataclass
 class SleepRecord:
@@ -69,21 +66,32 @@ def fetch_oura_sleep(start_date: dt.date, end_date: dt.date) -> List[SleepRecord
     return records
 
 
-def fetch_garmin_activity(start_date: dt.date, end_date: dt.date):
-    """Placeholder for fetching Garmin activity data."""
-    raise NotImplementedError(
-        "Fetching Garmin data requires OAuth credentials and is not implemented."
-    )
-
-
-def load_cold_baths(csv_file: str) -> List[ColdBathRecord]:
-    """Load cold bath dates from a CSV file with a 'date' column."""
+def fetch_oura_cold_baths(start_date: dt.date, end_date: dt.date) -> List[ColdBathRecord]:
+    """Detect cold baths from Oura workouts between start_date and end_date."""
+    token = CREDENTIALS["oura_token"]
+    if not token:
+        raise EnvironmentError("OURA_TOKEN is not set")
+    headers = {"Authorization": f"Bearer {token}"}
+    params = {
+        "start_date": start_date.isoformat(),
+        "end_date": end_date.isoformat(),
+    }
+    resp = requests.get(OURA_WORKOUT_ENDPOINT, headers=headers, params=params, timeout=30)
+    resp.raise_for_status()
+    data = resp.json().get("data", [])
     records: List[ColdBathRecord] = []
-    with open(csv_file, newline="") as fh:
-        reader = csv.DictReader(fh)
-        for row in reader:
-            records.append(ColdBathRecord(date=dt.date.fromisoformat(row["date"])))
+    for w in data:
+        start_str = w.get("start_datetime") or w.get("start_time")
+        if not start_str:
+            continue
+        # Handle trailing "Z" by converting to offset aware string
+        start_dt = dt.datetime.fromisoformat(start_str.replace("Z", "+00:00"))
+        duration = float(w.get("duration", 0))
+        if 6 <= start_dt.hour < 10 and 120 <= duration <= 300:
+            records.append(ColdBathRecord(date=start_dt.date()))
     return records
+
+
 
 
 def correlate_baths_sleep(
@@ -110,7 +118,7 @@ def main():
     start = dt.date.today() - dt.timedelta(days=30)
     end = dt.date.today()
     sleep_data = fetch_oura_sleep(start, end)
-    baths = load_cold_baths("cold_baths.csv")
+    baths = fetch_oura_cold_baths(start, end)
     corr = correlate_baths_sleep(sleep_data, baths)
     print(f"Correlation between cold baths and sleep duration: {corr:.2f}")
 

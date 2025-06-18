@@ -1,8 +1,8 @@
 # ChatGPT Sleep and Cold Bath Analyzer
 
 This repository contains a simple Python script for correlating your cold bath
-habit with sleep data from Oura and Garmin. The Garmin portion is currently a
-placeholder and will need to be completed with valid API calls and credentials.
+habit with sleep data from Oura. If you sync Garmin via Strava kommer dina
+kortare kallbadspass automatiskt dyka upp som träningspass i Oura.
 
 ## Setup
 1. Install the required Python package:
@@ -10,10 +10,7 @@ placeholder and will need to be completed with valid API calls and credentials.
    python3 -m pip install requests
    ```
     (Internet access is required to install the package.)
-2. Set environment variables `OURA_TOKEN`, `GARMIN_CLIENT_ID` och
-   `GARMIN_CLIENT_SECRET` med dina egna värden.
-3. Create a CSV file named `cold_baths.csv` with a header `date` and dates in
-   `YYYY-MM-DD` format when you took cold baths.
+2. Sätt miljövariabeln `OURA_TOKEN` med ditt personliga access token.
 
 ## Hämta din Oura-token
 1. Logga in på [Oura Cloud](https://cloud.ouraring.com/).
@@ -25,11 +22,12 @@ placeholder and will need to be completed with valid API calls and credentials.
 ```
 python3 oura_garmin_analyzer.py
 ```
-The script fetches the last 30 days of Oura sleep data, loads your cold bath
-dates from `cold_baths.csv`, and prints the correlation between taking a cold
-bath and the total sleep duration.
+The script fetches the last 30 days of Oura sleep data and
+identifierar kallbad genom att leta efter korta morgonpass i Oura
+(mellan 06:00 och 10:00, 2–5 minuter). Resultatet blir korrelationen
+mellan kallbad och total sovtid.
 
 ## Disclaimer
-This script uses the Oura API and expects valid credentials. Garmin data fetching
-is not yet implemented. Network access is required to download data from Oura,
-which may not function in restricted environments.
+This script uses the Oura API and expects valid credentials. Network access is
+required to download data from Oura, vilket kan vara begränsat i vissa
+miljöer.
