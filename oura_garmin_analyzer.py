@@ -62,6 +62,7 @@ def fetch_oura_sleep(start_date: dt.date, end_date: dt.date) -> List[SleepRecord
     data = data.get("data", [])
     records = []
 
+    for d in data:
         date_str = d.get("day") or d.get("summary_date")
         if not date_str:
             continue
