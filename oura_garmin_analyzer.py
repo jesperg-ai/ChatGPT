@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-"""
+"""Sleep and Cold Bath Analyzer - correlates Oura sleep data with cold bath workouts."""
 
 import datetime as dt
 import os
+import webbrowser
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -156,7 +157,15 @@ def open_file_in_browser(path: str) -> None:
 
 def generate_html_report(image_path: str, html_path: str) -> None:
     """Create a simple HTML page displaying the given image."""
-
+    image_filename = os.path.basename(image_path)
+    html_content = f"""<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Sleep vs Cold Bath Report</title></head>
+<body>
+<h1>Sleep vs Cold Bath Report</h1>
+<img src="{image_filename}" style="max-width:100%">
+</body>
+</html>"""
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html_content)
 
